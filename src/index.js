@@ -1,17 +1,27 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import ReactDOM from "react-dom";
+
+const projectName = 'PlantBuddy';
+const plants = ['Tomate', 'Stachelbeere', 'Paprika', 'Erbse', 'Erdbeere'];
+
+document.title = projectName;
+
+function Grid(props) {
+  return <section class="grid"> {plants.map(item => (<Tile name={item}/>))} </section>; 
+}
+
+function Tile(props) {
+  return (
+    <article class="tile">
+      <h1>{props.name}</h1>
+      <p>Schattenplatz</p>
+    </article>
+    );
+}
+
+const body = <Grid />;
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  body,
   document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
