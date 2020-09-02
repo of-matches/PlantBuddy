@@ -5,19 +5,28 @@ const app = express();
 const port = 3001;
 
 app.get('/currentWeather', (req: any, res: any) => {
+	const dayInMilliseconds: number = 1;
     let openWeatherMapAPIKey = "e41b6bef2f0be05514166de5593c3f3e";
-    let cityName = "Darmstadt";
-    let countryCode = "DE";
-    let location = cityName + "," + countryCode;
+	let latitude = 0;
+	let longitude = 0;
+	let timestampNow = Date.now();
+	let weatherData = new Array();
 
-    let apiCallBlueprint = "https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + openWeatherMapAPIKey;
+    let apiCallString = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + latitude + '&lon=' + longitude;
+
+	for(let i = 0; i < 5; i++){
+		timestampNow -= dayInMilliseconds;
+		apiCallString = apiCallString + '&dt=' + timestampNow + '&appid=' + openWeatherMapAPIKey;
+		nodeFetch(apiCallString)
+		.then((response: any) => response.json())
+		.then((data: any) => { 
+			res.json(data);
+
+		})
+		.catch((error: any) => { console.error('Error:', error); });
+	}
+
 	
-	nodeFetch("https://api.openweathermap.org/data/2.5/weather?q=London&appid=" + openWeatherMapAPIKey)
-	.then((response: any) => response.json())
-	.then((data: any) => res.json(data)); 
+});
 
-})
-
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-})
+app.listen(port, () => { console.log(`Server listening at http://localhost:${port}`); });
