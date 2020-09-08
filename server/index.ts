@@ -1,8 +1,18 @@
 const express = require('express');
 const nodeFetch = require('node-fetch');
+const {Pool, Client} = require('pg');
 
 const app = express();
 const port = 3001;
+const client = new Client({
+	user: 'plantbuddy_server',
+	host: 'localhost',
+	database: 'plantbuddy',
+	password: 'plantbuddy',
+	port: 5433,
+});
+
+client.connect();
 
 app.get('/currentWeather', (req: any, res: any) => {
 	const dayInMilliseconds: number = 1;
@@ -29,6 +39,13 @@ app.get('/currentWeather', (req: any, res: any) => {
 		})
 		.catch((error: any) => { console.error('Error:', error); });
 	}
+});
+
+app.get('/plants', (req: any, res: any) => {
+	client
+  		.query('SELECT * FROM plants')
+  		.then((queryResult: any) => res.send(queryResult.rows))
+  		.catch((error: any) => console.error(error.stack))
 });
 
 app.listen(port, () => { console.log(`Server listening at http://localhost:${port}`); });

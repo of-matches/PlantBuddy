@@ -1,26 +1,43 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  	return (
+    	<Grid />
+  	);
+}
+
+class Grid extends React.Component {
+	state = {plants: []}
+
+	render() {
+		return (
+			<section className="grid">
+				{ this.state.plants.map(plant => (<Tile name={plant['name']} preferredInsolation={plant['preferred_insolation']} preferredWetness={plant['preferred_wetness']} />)) }
+			</section>
+		);
+	}
+
+	componentDidMount() {
+		this.fetchArticles();
+		this.render();
+	}
+
+	fetchArticles() {
+		fetch('/plants')
+      	.then(res => res.json())
+      	.then(plants => this.setState({ plants }));
+	}
+}
+
+function Tile(props: any) {
+	return (
+		<article>
+			<h2> {props.name} </h2>
+			<p> Preferred Insolation: {props.preferredInsolation} </p>
+			<p> Preferred Wetness: {props.preferredWetness} </p>
+		</article>
+	);
 }
 
 export default App;
