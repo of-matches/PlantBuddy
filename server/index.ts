@@ -14,31 +14,32 @@ const client = new Client({
 
 client.connect();
 
-app.get('/currentWeather', (req: any, res: any) => {
-	const dayInMilliseconds: number = 1;
+app.get('/weatherHistory', (req: any, res: any) => {
+	const dayInMilliseconds: number = 86400;
     let openWeatherMapAPIKey = "e41b6bef2f0be05514166de5593c3f3e";
 	let latitude = 49.87167;
 	let longitude = 8.65027;
-	let timestampNow = Date.now();
+	let timestampInSeconds = Math.floor(Date.now() / 1000);
 	let weatherData = new Array();
-	let dataSet;
+	let tempData;
 
-    let apiCallStringOutline = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + latitude + '&lon=' + longitude;
+    let apiCallStringTemplate = 'https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=' + latitude + '&lon=' + longitude;
 	let apiCallString;
 
 	for(let i = 0; i < 5; i++) {
-		timestampNow -= dayInMilliseconds;
-		apiCallString = apiCallStringOutline + '&dt=' + timestampNow + '&appid=' + openWeatherMapAPIKey;
+		apiCallString = apiCallStringTemplate + '&dt=' + timestampInSeconds + '&appid=' + openWeatherMapAPIKey;
 
 		nodeFetch(apiCallString)
 		.then((response: any) => response.json())
 		.then((data: any) => {
-			dataSet = JSON.parse(data);
-			let relevantData = {temperature: 20, precipitation: 30}
-			weatherData[i] = relevantData;
+			res.write(JSON.stringify(data));
 		})
 		.catch((error: any) => { console.error('Error:', error); });
+		
+		timestampInSeconds -= dayInMilliseconds;
 	}
+
+	res.end();
 });
 
 app.get('/plants', (req: any, res: any) => {
